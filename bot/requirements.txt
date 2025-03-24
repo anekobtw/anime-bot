@@ -1,0 +1,3 @@
+aiogram==3.17.0
+jutsu_api==2.4
+python-dotenv==1.0.1
