@@ -85,7 +85,6 @@ async def _(callback: types.CallbackQuery) -> None:
 
 @router.callback_query(F.data == "home")
 async def _(callback: types.CallbackQuery) -> None:
-    print(Filter.available.types)
     try:
         await callback.message.edit_text(text=GeneralMessage.GREETING.value, reply_markup=start_kb())
     except exceptions.TelegramBadRequest:
