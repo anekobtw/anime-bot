@@ -1,3 +1,4 @@
-aiogram==3.17.0
-jutsu_api==2.4
-python-dotenv==1.0.1
+aiogram==3.19.0
+jikanpy-v4==1.0.2
+jutsu_api==2.5
+python-dotenv==1.1.0

@@ -13,7 +13,7 @@ def generate_description(anime_id: str) -> list[str, str]:
             types=", ".join([t.name for t in anime_jutsu.info.types]),
             years=", ".join(map(str, anime_jutsu.years)),
             genres=", ".join([genre.name for genre in anime_jutsu.info.genres]),
-            ongoing="✅ Онгоинг: Да" if anime_jutsu.ongoing else "❌ Онгоинг: Нет",
+            ongoing="✅ <b>Онгоинг:</b> Да" if anime_jutsu.ongoing else "❌ <b>Онгоинг:</b> Нет",
             episodes=anime_jutsu.content.count,
             rating=f"{anime_jikan["score"]}/10",
             description=anime_jutsu.description[:400],
