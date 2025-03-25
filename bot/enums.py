@@ -5,7 +5,7 @@ from jutsu_api import API
 
 
 class Buttons(Enum):
-    RANDOM = "🍀 Рандомное аниме"
+    RANDOM = "🎲 Рандомное аниме"
     TOP_GENRES = "🏆 Топ по жанрам"
     HOME = "🏠 На главную"
 
@@ -17,7 +17,7 @@ class GeneralMessage(Enum):
 
 
 class AnimeInfo(Enum):
-    DESCRIPTION = "<b>{emoji} {name}</b> ({years}) • {rating}\n\n" "✍️ <b>Тип:</b> {types}\n" "🎭 <b>Жанр:</b> {genres}\n" "{ongoing}\n" "📊 <b>Эпизоды:</b> {episodes}\n\n" "📝 <i>{description}...</i>\n\n" "▶️ <a href='{trailer}'>Смотреть трейлер</a>\n" "📺 <a href='{link}'>Смотреть аниме</a>"  # noqa: E501
+    DESCRIPTION = "<b>{emoji} {name} ({years})</b>\n\n" "⭐ <b>Оценка:</b> {rating}\n" "🎭 <b>Жанр:</b> {genres}\n" "{ongoing}\n" "📊 <b>Эпизоды:</b> {episodes}\n\n" "📝 <i>{description}</i>\n\n" "▶️ <a href='{trailer}'>Смотреть трейлер</a>\n" "📺 <a href='{link}'>Смотреть аниме</a>"  # noqa: E501
 
 
 class StatusMessage(Enum):
