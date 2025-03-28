@@ -72,13 +72,12 @@ async def _(callback: types.CallbackQuery) -> None:
     for attempt in range(MAX_RETRIES):
         try:
             anime = (
-                API.anilibria.value.random()
-                if anime_id == "random"
-                else API.anilibria.value.search_id(int(anime_id))
+                API.anilibria.value.random() if anime_id == "random" else API.anilibria.value.search_id(int(anime_id))
             )
-            description = generate_description(anime)
+            description = await generate_description(anime)
             break
         except Exception as e:
+            print(e)
             if attempt == MAX_RETRIES - 1:
                 await callback.answer("⚠️ Не получилось найти аниме. Пожалуйтса, попробуйте позже.", show_alert=True)
                 raise e
