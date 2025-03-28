@@ -21,9 +21,12 @@ def start_kb() -> types.InlineKeyboardMarkup:
     )
 
 
-def home_kb() -> types.InlineKeyboardMarkup:
+def random_kb() -> types.InlineKeyboardMarkup:
     return types.InlineKeyboardMarkup(
-        inline_keyboard=[[types.InlineKeyboardButton(text=Buttons.HOME.value, callback_data="home")]]
+        inline_keyboard=[
+            [types.InlineKeyboardButton(text=Buttons.RANDOM.value, callback_data="anime_random")],
+            [types.InlineKeyboardButton(text=Buttons.HOME.value, callback_data="home")],
+        ],
     )
 
 
@@ -33,7 +36,7 @@ def anime_kb(animes: List[Anime], k: int = None) -> types.InlineKeyboardMarkup:
     btns = [
         [
             types.InlineKeyboardButton(
-                text=f"{anime.name_ru} ({len(anime.episodes)} серий)", callback_data=f"anime_{anime.id}"
+                text=f"{anime.name_ru} ({anime.episodes_count} серий)", callback_data=f"anime_{anime.id}"
             )
         ]
         for anime in animes
@@ -63,10 +66,26 @@ async def _(message: types.Message) -> None:
 @router.callback_query(F.data.startswith("anime_"))
 async def _(callback: types.CallbackQuery) -> None:
     anime_id = callback.data.split("_")[1]
-    anime = API.anilibria.value.random() if anime_id == "random" else API.anilibria.value.search_id(int(anime_id))
+
+    MAX_RETRIES = 3
+
+    for attempt in range(MAX_RETRIES):
+        try:
+            anime = (
+                API.anilibria.value.random()
+                if anime_id == "random"
+                else API.anilibria.value.search_id(int(anime_id))
+            )
+            description = generate_description(anime)
+            break
+        except Exception as e:
+            if attempt == MAX_RETRIES - 1:
+                await callback.answer("⚠️ Не получилось найти аниме. Пожалуйтса, попробуйте позже.", show_alert=True)
+                raise e
+
     await callback.message.edit_media(
-        media=types.InputMediaPhoto(media=anime.poster_original_url, caption=generate_description(anime)),
-        reply_markup=home_kb(),
+        media=types.InputMediaPhoto(media=anime.poster_original_url, caption=description),
+        reply_markup=random_kb(),
     )
 
 

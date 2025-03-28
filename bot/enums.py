@@ -19,16 +19,13 @@ class GeneralMessage(Enum):
 
 class AnimeInfo(Enum):
     DESCRIPTION = (
-        "🍿 <b>{name_ru} ({year})</b>\n"
-        "⭐ <b>Оценка:</b> {rating}/10\n"
-        "❤️ <b>Понравилось:</b> {in_favorites}\n\n"
-        "🎭 <b>Жанры:</b> {genres}\n"
-        "🏷️ <b>Статус:</b> {status}\n"
-        "📊 <b>Эпизоды:</b> {episodes} (каждая по {episodes_length} мин)\n\n"
+        "🍿 <code>{name}</code> ({year}, {status}{age})\n\n"
+        "⭐ <b>Оценка</b> {rating}/10\n"
+        "❤️ <b>Понравилось:</b> {in_favorites}\n"
+        "🎥 <b>Тип:</b> {type}\n"
+        "🎭 <b>Жанры:</b> {genres}\n\n"
         "📝 <i>{description}</i>\n\n"
-        "▶️ <b><a href='{trailer}'>Смотреть трейлер</a></b>\n"
-        "📺 <b><a href='{link_anilibria}'>Смотреть на AniLibria</a></b>\n"
-        "📺 <b><a href='{link_jutsu}'>Смотреть на jut.su</a></b>\n\n"
+        "▶️ <b><a href='{trailer}'>Трейлер</a></b> | 📺 <b><a href='{link_anilibria}'>AniLibria</a></b> | 📺 <b><a href='{link_jutsu}'>jut.su</a></b>\n\n"
         "<b>@watch_animes_bot</b>"
     )
 
