@@ -1,5 +1,6 @@
 from enum import Enum
 
+from anilibria import AniLibriaClient
 from jikanpy import Jikan
 from jutsu_api import API
 
@@ -17,7 +18,19 @@ class GeneralMessage(Enum):
 
 
 class AnimeInfo(Enum):
-    DESCRIPTION = "<b>{emoji} {name} ({years})</b>\n\n" "⭐ <b>Оценка:</b> {rating}\n" "🎭 <b>Жанр:</b> {genres}\n" "{ongoing}\n" "📊 <b>Эпизоды:</b> {episodes}\n\n" "📝 <i>{description}</i>\n\n" "▶️ <a href='{trailer}'>Смотреть трейлер</a>\n" "📺 <a href='{link}'>Смотреть аниме</a>"  # noqa: E501
+    DESCRIPTION = (
+        "🍿 <b>{name_ru} ({year})</b>\n"
+        "⭐ <b>Оценка:</b> {rating}/10\n"
+        "❤️ <b>Понравилось:</b> {in_favorites}\n\n"
+        "🎭 <b>Жанры:</b> {genres}\n"
+        "🏷️ <b>Статус:</b> {status}\n"
+        "📊 <b>Эпизоды:</b> {episodes} (каждая по {episodes_length} мин)\n\n"
+        "📝 <i>{description}</i>\n\n"
+        "▶️ <b><a href='{trailer}'>Смотреть трейлер</a></b>\n"
+        "📺 <b><a href='{link_anilibria}'>Смотреть на AniLibria</a></b>\n"
+        "📺 <b><a href='{link_jutsu}'>Смотреть на jut.su</a></b>\n\n"
+        "<b>@watch_animes_bot</b>"
+    )
 
 
 class StatusMessage(Enum):
@@ -26,49 +39,7 @@ class StatusMessage(Enum):
     FOUND = "🔎 Вот что я нашел:"
 
 
-class AnimeGenres(Enum):
-    ONGOING = ("Онгоинг", "ongoing")
-    YEAR2025 = ("2025", "2025")
-    YEAR2024 = ("2024", "2024")
-    YEAR2023 = ("2023", "2023")
-    YEAR2022 = ("2022", "2022")
-    YEARS20152021 = ("2015-2021", "2015-2021")
-    YEARS20082014 = ("2008-2014", "2008-2014")
-    YEARS20002007 = ("2000-2007", "2000-2007")
-    BEFORE_2000 = ("До 2000", "before2000")
-    MYSTIC = ("Мистика", "mystic")
-    EVERYDAY = ("Повседневность", "everyday")
-    FANTASY = ("Фэнтези", "fantasy")
-    COMEDY = ("Комедия", "comedy")
-    ROMANCE = ("Романтика", "romance")
-    FANTASTIC = ("Фантастика", "fantastic")
-    ADVENTURE = ("Приключения", "adventure")
-    DETECTIVE = ("Детектив", "detective")
-    THRILLER = ("Триллер", "thriller")
-    DRAMA = ("Драма", "drama")
-    PSYCHOLOGY = ("Психология", "psychology")
-    ACTION = ("Боевик", "action")
-    FIGHTING = ("Боевые искусства", "fighting")
-    VAMPIRE = ("Вампиры", "vampire")
-    MILITARY = ("Военное", "military")
-    DEMONS = ("Демоны", "demons")
-    GAME = ("Игры", "game")
-    HISTORICAL = ("История", "historical")
-    SPACE = ("Космос", "space")
-    MAGIC = ("Магия", "magic")
-    MECHA = ("Меха", "mecha")
-    MUSIC = ("Музыка", "music")
-    PARODY = ("Пародия", "parody")
-    POLICE = ("Полиция", "police")
-    SAMURAI = ("Самураи", "samurai")
-    SHOJO = ("Сёдзё", "shojo")
-    SHONEN = ("Сёнен", "shonen")
-    SPORT = ("Спорт", "sport")
-    SUPERPOWER = ("Суперсила", "superpower")
-    HORROR = ("Ужасы", "horror")
-    SCHOOL = ("Школа", "school")
-
-
 class API(Enum):
     jutsu = API()
+    anilibria = AniLibriaClient()
     jikan = Jikan()
