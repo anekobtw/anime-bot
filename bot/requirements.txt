@@ -1,5 +1,7 @@
 aiogram==3.19.0
 anilibria==0.1.4
-jikanpy-v4==1.0.2
+jikanpy-v4==4.3.2
 jutsu_api==2.5
+pymorphy3==2.0.3
 python-dotenv==1.1.0
+python_dateutil==2.9.0.post0
