@@ -3,6 +3,7 @@ from typing import List
 from aiogram import F, Router, exceptions, types
 from aiogram.filters import Command
 from anilibria import Anime
+from anilibria import AniLibriaRequestException
 
 from enums import API, Buttons, GeneralMessage, Keyboards, StatusMessage
 from handlers.helpers import generate_description
@@ -51,9 +52,11 @@ async def _(callback: types.CallbackQuery) -> None:
     try:
         anime = API.anilibria.value.random() if anime_id == "random" else API.anilibria.value.search_id(int(anime_id))
         description = await generate_description(anime)
+    except AniLibriaRequestException:
+        await callback.answer("⚠️ Сервер не отвечает. Пожалуйста, попробуйте позже.", show_alert=True)
     except Exception as e:
         print(e)
-        await callback.answer("⚠️ Не получилось найти аниме. Пожалуйтса, попробуйте позже.", show_alert=True)
+        await callback.answer("⚠️ Не получилось найти аниме. Пожалуйста, попробуйте позже.", show_alert=True)
         raise e
 
     await callback.message.edit_media(

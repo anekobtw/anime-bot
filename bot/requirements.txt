@@ -1,5 +1,5 @@
 aiogram==3.19.0
-anilibria==0.1.4
+anilibria==0.1.5
 jutsu_api==2.5
 pymorphy3==2.0.3
 python-dotenv==1.1.0
