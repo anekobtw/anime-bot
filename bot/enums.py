@@ -2,7 +2,7 @@ import datetime
 from enum import Enum
 
 from aiogram import types
-from anilibria import AniLibriaClient
+from anilibria.client import AniLibriaClient
 from jikanpy import Jikan
 from jutsu_api import API
 
@@ -48,13 +48,15 @@ class Keyboards(Enum):
             [types.InlineKeyboardButton(text=Buttons.TELEGRAM_CHANNEL.value, url="t.me/anekobtw_c")],
         ]
     )
-    ANIME = types.InlineKeyboardMarkup(
-        inline_keyboard=[
-            [types.InlineKeyboardButton(text=Buttons.RANDOM.value, callback_data="anime_random")],
-            [types.InlineKeyboardButton(text=Buttons.SIMILAR.value, callback_data="anime_similar_{id}")],
-            [types.InlineKeyboardButton(text=Buttons.HOME.value, callback_data="home")],
-        ],
-    )
+    @staticmethod
+    def anime(anime_id: int) -> types.InlineKeyboardMarkup:
+        return types.InlineKeyboardMarkup(
+            inline_keyboard=[
+                [types.InlineKeyboardButton(text=Buttons.RANDOM.value, callback_data="anime_random")],
+                [types.InlineKeyboardButton(text=Buttons.SIMILAR.value, callback_data=f"similar_{anime_id}")],
+                [types.InlineKeyboardButton(text=Buttons.HOME.value, callback_data="home")],
+            ]
+        )
 
 
 class GeneralMessage(Enum):

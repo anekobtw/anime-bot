@@ -2,7 +2,7 @@ from aiogram import F, Router, types
 
 from enums import API, Keyboards
 from handlers.helpers import get_relative_time
-from anilibria import AniLibriaRequestException
+from anilibria.exceptions import AniLibriaRequestException
 from enums import Error
 
 router = Router()

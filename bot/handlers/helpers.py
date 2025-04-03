@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Any
 
 import pymorphy3
-from anilibria import Anime
+from anilibria.models import Anime
 from dateutil.relativedelta import relativedelta
 
 from enums import API, AnimeInfo
