@@ -64,14 +64,34 @@ async def _(callback: types.CallbackQuery) -> None:
     )
 
 @router.callback_query(F.data.startswith("similar_"))
-async def _(callback: types.CallbackQuery) -> None:
+async def handle_similar_anime(callback: types.CallbackQuery) -> None:
     anime_id = callback.data.split("_")[1]
     anime = API.anilibria.value.search_id(anime_id)
-    genres = anime.genres
-    pairs = list(combinations(genres, 2))
-    for pair in pairs:
-        print(pair)
-        await callback.message.answer(str(API.anilibria.value.search(filter=SearchFilter(genres=pair))))
+    genre_pairs = list(combinations(anime.genres, 2))
+    total_pairs = len(genre_pairs)
+
+    msg = await callback.message.answer(f"<b>⌛ Поиск.. 0%</b>")
+    animes = []
+
+    for idx, pair in enumerate(genre_pairs, start=1):
+        search_filter = SearchFilter(
+            years=list(range(anime.year - 2, anime.year + 3)),
+            genres=pair,
+            limit=3,
+        )
+        results = API.anilibria.value.search(filter=search_filter)
+
+        for result in results:
+            if result.id != anime.id and result not in animes:
+                animes.append(result)
+
+        await msg.edit_text(f"<b>{'⌛' if idx % 2 == 0 else '⏳'} Поиск.. {round(idx/total_pairs*100, 1)}%</b>")
+
+    await msg.edit_text(
+        f"<b>Похожие аниме на <i>{anime.name_ru}</i></b>",
+        reply_markup=anime_kb(animes)
+    )
+
 
 
 @router.callback_query(F.data == "home")
