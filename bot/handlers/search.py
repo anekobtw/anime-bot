@@ -5,7 +5,7 @@ from aiogram.filters import Command
 from anilibria import Anime
 from anilibria import AniLibriaRequestException
 
-from enums import API, Buttons, GeneralMessage, Keyboards, StatusMessage
+from enums import API, Buttons, GeneralMessage, Keyboards, StatusMessage, Error
 from handlers.helpers import generate_description
 
 router = Router()
@@ -53,11 +53,9 @@ async def _(callback: types.CallbackQuery) -> None:
         anime = API.anilibria.value.random() if anime_id == "random" else API.anilibria.value.search_id(int(anime_id))
         description = await generate_description(anime)
     except AniLibriaRequestException:
-        await callback.answer("⚠️ Сервер не отвечает. Пожалуйста, попробуйте позже.", show_alert=True)
-    except Exception as e:
-        print(e)
-        await callback.answer("⚠️ Не получилось найти аниме. Пожалуйста, попробуйте позже.", show_alert=True)
-        raise e
+        await callback.answer(Error.SERVER_ERROR.value, show_alert=True)
+    except Exception:
+        await callback.answer(Error.NOT_FOUND.value, show_alert=True)
 
     await callback.message.edit_media(
         media=types.InputMediaPhoto(media=anime.poster_original_url, caption=description),

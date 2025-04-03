@@ -7,9 +7,16 @@ from jikanpy import Jikan
 from jutsu_api import API
 
 
+
+class Error(Enum):
+    SERVER_ERROR = "⚠️ Сервер не отвечает. Пожалуйста, попробуйте позже."
+    NOT_FOUND = "⚠️ Не получилось найти аниме. Пожалуйста, попробуйте позже."
+
+
 class Buttons(Enum):
-    RANDOM = "🎲 Рандомное аниме"
+    RANDOM = "🎲 Случайное аниме"
     SCHEDULE = "📅 Расписание"
+    SIMILAR = "🔍 Похожие аниме"
     HOME = "🏠 На главную"
     TELEGRAM_CHANNEL = "📰 Телеграм канал с новостями"
 
@@ -41,9 +48,10 @@ class Keyboards(Enum):
             [types.InlineKeyboardButton(text=Buttons.TELEGRAM_CHANNEL.value, url="t.me/anekobtw_c")],
         ]
     )
-    RANDOM = types.InlineKeyboardMarkup(
+    ANIME = types.InlineKeyboardMarkup(
         inline_keyboard=[
             [types.InlineKeyboardButton(text=Buttons.RANDOM.value, callback_data="anime_random")],
+            [types.InlineKeyboardButton(text=Buttons.SIMILAR.value, callback_data="anime_similar_{id}")],
             [types.InlineKeyboardButton(text=Buttons.HOME.value, callback_data="home")],
         ],
     )
@@ -61,7 +69,7 @@ class AnimeInfo(Enum):
         "🎥 <b>Тип:</b> {type}\n"
         "🎭 <b>Жанры:</b> {genres}\n\n"
         "📝 <i>{description}</i>\n\n"
-        "▶️ <b><a href='{trailer}'>Трейлер</a></b> | 📺 <b><a href='{link_anilibria}'>AniLibria</a></b> | 📺 <b><a href='{link_jutsu}'>jut.su</a></b>\n\n"
+        "▶️ <b><a href='{trailer}'>Трейлер</a></b> | 📺 <b><a href='{link_anilibria}'>AniLibria</a></b> | 📺 <b><a href='{link_jutsu}'>jutsu</a></b>\n\n"
         "<b>@watch_animes_bot</b>"
     )
 
