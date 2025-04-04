@@ -1,9 +1,8 @@
 from aiogram import F, Router, types
-
-from enums import API, Keyboards
-from handlers.helpers import get_relative_time
 from anilibria.exceptions import AniLibriaRequestException
-from enums import Error
+
+from enums import API, Error, Keyboards
+from handlers.helpers import get_relative_time
 
 router = Router()
 
@@ -35,4 +34,3 @@ async def _(callback: types.CallbackQuery) -> None:
         await callback.answer(Error.SERVER_ERROR.value, show_alert=True)
     except Exception:
         await callback.answer(Error.NOT_FOUND.value, show_alert=True)
-

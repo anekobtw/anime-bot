@@ -3,10 +3,10 @@ from typing import List
 
 from aiogram import F, Router, exceptions, types
 from aiogram.filters import Command
-from anilibria.models import SearchFilter, Anime
 from anilibria.exceptions import AniLibriaRequestException
+from anilibria.models import Anime, SearchFilter
 
-from enums import API, Buttons, GeneralMessage, Keyboards, StatusMessage, Error
+from enums import API, Buttons, Error, GeneralMessage, Keyboards, StatusMessage
 from handlers.helpers import generate_description
 
 router = Router()
@@ -35,7 +35,7 @@ async def start(message: types.Message) -> None:
 
 
 @router.message(F.text)
-async def _(message: types.Message) -> None:
+async def handle_text(message: types.Message) -> None:
     msg = await message.answer(StatusMessage.LOADING.value)
     await message.delete()
 
@@ -47,7 +47,7 @@ async def _(message: types.Message) -> None:
 
 
 @router.callback_query(F.data.startswith("anime_"))
-async def _(callback: types.CallbackQuery) -> None:
+async def search_anime(callback: types.CallbackQuery) -> None:
     data = callback.data.split("_")[1]
 
     try:
@@ -63,39 +63,36 @@ async def _(callback: types.CallbackQuery) -> None:
         reply_markup=Keyboards.anime(anime.id),
     )
 
+
 @router.callback_query(F.data.startswith("similar_"))
-async def handle_similar_anime(callback: types.CallbackQuery) -> None:
+async def similar(callback: types.CallbackQuery) -> None:
     anime_id = callback.data.split("_")[1]
     anime = API.anilibria.value.search_id(anime_id)
     genre_pairs = list(combinations(anime.genres, 2))
-    total_pairs = len(genre_pairs)
 
     msg = await callback.message.answer(f"<b>⌛ Поиск.. 0%</b>")
     animes = []
 
     for idx, pair in enumerate(genre_pairs, start=1):
-        search_filter = SearchFilter(
-            years=list(range(anime.year - 2, anime.year + 3)),
-            genres=pair,
-            limit=3,
+        results = API.anilibria.value.search(
+            filter=SearchFilter(
+                years=list(range(anime.year - 2, anime.year + 3)),
+                genres=pair,
+                limit=3,
+            )
         )
-        results = API.anilibria.value.search(filter=search_filter)
 
         for result in results:
             if result.id != anime.id and result not in animes:
                 animes.append(result)
 
-        await msg.edit_text(f"<b>{'⌛' if idx % 2 == 0 else '⏳'} Поиск.. {round(idx/total_pairs*100, 1)}%</b>")
+        await msg.edit_text(f"<b>{'⌛' if idx % 2 == 0 else '⏳'} Поиск.. {round(idx/len(genre_pairs)*100, 1)}%</b>")
 
-    await msg.edit_text(
-        f"<b>Похожие аниме на <i>{anime.name_ru}</i></b>",
-        reply_markup=anime_kb(animes)
-    )
-
+    await msg.edit_text(f"<b>Похожие аниме на <i>{anime.name_ru}</i></b>", reply_markup=anime_kb(animes))
 
 
 @router.callback_query(F.data == "home")
-async def _(callback: types.CallbackQuery) -> None:
+async def home(callback: types.CallbackQuery) -> None:
     try:
         await callback.message.edit_text(text=GeneralMessage.GREETING.value, reply_markup=Keyboards.MENU.value)
     except exceptions.TelegramBadRequest:

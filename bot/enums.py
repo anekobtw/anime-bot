@@ -7,7 +7,6 @@ from jikanpy import Jikan
 from jutsu_api import API
 
 
-
 class Error(Enum):
     SERVER_ERROR = "⚠️ Сервер не отвечает. Пожалуйста, попробуйте позже."
     NOT_FOUND = "⚠️ Не получилось найти аниме. Пожалуйста, попробуйте позже."
@@ -48,6 +47,7 @@ class Keyboards(Enum):
             [types.InlineKeyboardButton(text=Buttons.TELEGRAM_CHANNEL.value, url="t.me/anekobtw_c")],
         ]
     )
+
     @staticmethod
     def anime(anime_id: int) -> types.InlineKeyboardMarkup:
         return types.InlineKeyboardMarkup(

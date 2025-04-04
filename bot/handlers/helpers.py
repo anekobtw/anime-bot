@@ -48,6 +48,7 @@ async def generate_description(anime: Anime) -> str:
         link_anilibria="https://www.anilibria.top/anime/releases/release/" + anime.code + "/episodes",
     )
 
+
 def pluralize(word: str, number: int) -> str:
     parsed = morph.parse(word)[0]
     if number % 10 == 1 and number % 100 != 11:
@@ -56,7 +57,6 @@ def pluralize(word: str, number: int) -> str:
         return parsed.inflect({"gent"}).word  # Родительный ед. числа
     else:
         return parsed.inflect({"gent"}).inflect({"plur"}).word  # Родительный мн. числа
-
 
 
 def get_relative_time(timestamp: int) -> str:
