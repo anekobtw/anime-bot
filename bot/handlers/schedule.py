@@ -19,7 +19,7 @@ async def _(callback: types.CallbackQuery) -> None:
     except AniLibriaRequestException:
         await callback.answer(Error.SERVER_ERROR.value, show_alert=True)
     except Exception:
-        await callback.answer(Error.NOT_FOUND.value, show_alert=True)
+        await callback.answer(Error.GENERAL_ERROR.value, show_alert=True)
 
 
 @router.callback_query(F.data == "updates")
@@ -33,4 +33,4 @@ async def _(callback: types.CallbackQuery) -> None:
     except AniLibriaRequestException:
         await callback.answer(Error.SERVER_ERROR.value, show_alert=True)
     except Exception:
-        await callback.answer(Error.NOT_FOUND.value, show_alert=True)
+        await callback.answer(Error.GENERAL_ERROR.value, show_alert=True)

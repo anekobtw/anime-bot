@@ -9,6 +9,7 @@ from jikanpy import Jikan
 class Error(Enum):
     SERVER_ERROR = "⚠️ Сервер не отвечает. Пожалуйста, попробуйте позже."
     NOT_FOUND = "⚠️ Не получилось найти аниме. Пожалуйста, попробуйте позже."
+    GENERAL_ERROR = "⚠️ Произошла ошибка. Пожалуйста, попробуйте позже."
 
 
 class Buttons(Enum):
