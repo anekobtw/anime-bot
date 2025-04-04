@@ -4,7 +4,6 @@ from enum import Enum
 from aiogram import types
 from anilibria.client import AniLibriaClient
 from jikanpy import Jikan
-from jutsu_api import API
 
 
 class Error(Enum):
@@ -65,13 +64,13 @@ class GeneralMessage(Enum):
 
 class AnimeInfo(Enum):
     DESCRIPTION = (
-        "🍿 <code>{name}</code> ({year}, {status}{age})\n\n"
+        "🍿 <code>{name}</code> ({year}, {status})\n\n"
         "⭐ <b>Оценка</b> {rating}/10\n"
         "❤️ <b>Понравилось:</b> {in_favorites}\n"
         "🎥 <b>Тип:</b> {type}\n"
         "🎭 <b>Жанры:</b> {genres}\n\n"
         "📝 <i>{description}</i>\n\n"
-        "▶️ <b><a href='{trailer}'>Трейлер</a></b> | 📺 <b><a href='{link_anilibria}'>AniLibria</a></b> | 📺 <b><a href='{link_jutsu}'>jutsu</a></b>\n\n"
+        "▶️ <b><a href='{trailer}'>Трейлер</a></b> | 📺 <b><a href='{link_anilibria}'>AniLibria</a></b>\n\n"
         "<b>@watch_animes_bot</b>"
     )
 
@@ -83,6 +82,5 @@ class StatusMessage(Enum):
 
 
 class API(Enum):
-    jutsu = API()
     anilibria = AniLibriaClient()
     jikan = Jikan()
