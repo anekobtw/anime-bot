@@ -31,12 +31,9 @@ def generate_links(anime_id: int) -> str:
 
 
 def generate_description(anime: Anime) -> str:
-    jikan = API.jikan.value.search(search_type="anime", query=anime.name_en)["data"][0]
-
     description = AnimeInfo.DESCRIPTION.value.format(
         name=anime.name_ru,
         year=f"{anime.season.capitalize()} {anime.year}",
-        rating=f"{jikan["score"]}/10 ({jikan['scored_by']} голосов)",
         in_favorites=anime.in_favorites,
         genres=", ".join(anime.genres),
         status=anime.status,

@@ -71,7 +71,6 @@ class GeneralMessage(Enum):
 class AnimeInfo(Enum):
     DESCRIPTION = (
         "🍿 <code>{name}</code> ({year}, {status})\n\n"
-        "⭐ <b>Оценка</b> {rating}\n"
         "❤️ <b>Понравилось:</b> {in_favorites}\n"
         "🎥 <b>Тип:</b> {type}\n"
         "🎭 <b>Жанры:</b> {genres}\n\n"
