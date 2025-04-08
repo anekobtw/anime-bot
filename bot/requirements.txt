@@ -1,6 +1,7 @@
 aiogram==3.19.0
-anilibria==0.1.7
+anilibria==0.1.8
 jutsu_api==2.5
 pymorphy3==2.0.3
 python-dotenv==1.1.0
 python_dateutil==2.9.0.post0
+Requests==2.32.3

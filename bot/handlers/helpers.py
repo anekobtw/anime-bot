@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pymorphy3
+import requests
 from anilibria.models import Anime
 from dateutil.relativedelta import relativedelta
 
@@ -9,21 +10,38 @@ from enums import API, AnimeInfo
 morph = pymorphy3.MorphAnalyzer()
 
 
-async def generate_description(anime: Anime) -> str:
-    jikan = API.jikan.value.search(search_type="anime", query=anime.name_en)["data"][0]
+def generate_links(anime_id: int) -> str:
+    def get_anilist_id(title: str) -> int | None:
+        q = "query($search:String){Media(search:$search,type:ANIME){id}}"
+        r = requests.post("https://graphql.anilist.co", json={"query": q, "variables": {"search": title}})
+        return r.json().get("data", {}).get("Media", {}).get("id")
 
+    anilibria = API.anilibria.value.search_id(anime_id)
+    jikan = API.jikan.value.search(anilibria.name_en)["data"][0]
+    anilist_url = f"https://anilist.co/anime/{get_anilist_id(anilibria.name_en)}"
+    jutsu = API.jutsu.value.search(anilibria.name_ru)[0]
+
+    return AnimeInfo.LINKS.value.format(
+        trailer=jikan["trailer"]["url"],
+        anilist=anilist_url,
+        jikan=jikan["url"],
+        anilibria=f"https://www.anilibria.top/anime/releases/release/{anilibria.code}/episodes",
+        jutsu=f"https://jut.su/{jutsu.id}",
+    )
+
+
+def generate_description(anime: Anime) -> str:
+    jikan = API.jikan.value.search(search_type="anime", query=anime.name_en)["data"][0]
 
     description = AnimeInfo.DESCRIPTION.value.format(
         name=anime.name_ru,
         year=f"{anime.season.capitalize()} {anime.year}",
-        rating=jikan["score"],
+        rating=f"{jikan["score"]}/10 ({jikan['scored_by']} голосов)",
         in_favorites=anime.in_favorites,
         genres=", ".join(anime.genres),
         status=anime.status,
         type=anime.type,
         description=f"{'.'.join(anime.description.split('.')[:3])}...",
-        trailer=jikan["trailer"]["url"],
-        link_anilibria="https://www.anilibria.top/anime/releases/release/" + anime.code + "/episodes",
     )
 
     return description

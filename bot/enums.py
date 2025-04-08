@@ -4,6 +4,7 @@ from enum import Enum
 from aiogram import types
 from anilibria.client import AniLibriaClient
 from jikanpy import Jikan
+from jutsu_api import API
 
 
 class Error(Enum):
@@ -14,6 +15,7 @@ class Error(Enum):
 
 class Buttons(Enum):
     RANDOM = "🎲 Случайное аниме"
+    WATCH = "▶️ Смотреть"
     SCHEDULE = "📅 Расписание"
     SIMILAR = "🔍 Похожие аниме"
     HOME = "🏠 На главную"
@@ -41,7 +43,7 @@ class Keyboards(Enum):
             [types.InlineKeyboardButton(text=Buttons.RANDOM.value, callback_data="anime_random")],
             [
                 types.InlineKeyboardButton(
-                    text=Buttons.SCHEDULE.value, callback_data=f"schedule_{datetime.datetime.today().weekday()}"
+                    text=Buttons.SCHEDULE.value, callback_data=f"schedule_{datetime.datetime.now().weekday()}"
                 )
             ],
             [types.InlineKeyboardButton(text=Buttons.TELEGRAM_CHANNEL.value, url="t.me/anekobtw_c")],
@@ -52,8 +54,11 @@ class Keyboards(Enum):
     def anime(anime_id: int) -> types.InlineKeyboardMarkup:
         return types.InlineKeyboardMarkup(
             inline_keyboard=[
+                [
+                    [types.InlineKeyboardButton(text=Buttons.WATCH.value, callback_data=f"watch_{anime_id}")],
+                    [types.InlineKeyboardButton(text=Buttons.SIMILAR.value, callback_data=f"similar_{anime_id}")],
+                ],
                 [types.InlineKeyboardButton(text=Buttons.RANDOM.value, callback_data="anime_random")],
-                [types.InlineKeyboardButton(text=Buttons.SIMILAR.value, callback_data=f"similar_{anime_id}")],
                 [types.InlineKeyboardButton(text=Buttons.HOME.value, callback_data="home")],
             ]
         )
@@ -66,13 +71,18 @@ class GeneralMessage(Enum):
 class AnimeInfo(Enum):
     DESCRIPTION = (
         "🍿 <code>{name}</code> ({year}, {status})\n\n"
-        "⭐ <b>Оценка</b> {rating}/10\n"
+        "⭐ <b>Оценка</b> {rating}\n"
         "❤️ <b>Понравилось:</b> {in_favorites}\n"
         "🎥 <b>Тип:</b> {type}\n"
         "🎭 <b>Жанры:</b> {genres}\n\n"
-        "📝 <i>{description}</i>\n\n"
-        "▶️ <b><a href='{trailer}'>Трейлер</a></b> | 📺 <b><a href='{link_anilibria}'>AniLibria</a></b>\n\n"
+        "📃 <i>{description}</i>\n\n"
         "<b>@watch_animes_bot</b>"
+    )
+    LINKS = (
+        "Ссылки:\n\n"
+        "<a href={trailer}>Trailer</a>\n"
+        "🇺🇸 <a href={anilist}>AniList</a> | <a href={jikan}>MyAnimeList</a>\n"
+        "🇷🇺 <a href={anilibria}>AniLibria{/a} | <a href={jutsu}>jutsu</a>\n"
     )
 
 
@@ -85,3 +95,4 @@ class StatusMessage(Enum):
 class API(Enum):
     anilibria = AniLibriaClient()
     jikan = Jikan()
+    jutsu = API()

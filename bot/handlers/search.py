@@ -7,7 +7,7 @@ from anilibria.exceptions import AniLibriaRequestException
 from anilibria.models import Anime, SearchFilter
 
 from enums import API, Buttons, Error, GeneralMessage, Keyboards, StatusMessage
-from handlers.helpers import generate_description
+from handlers.helpers import generate_description, generate_links
 
 router = Router()
 
@@ -19,7 +19,7 @@ def anime_kb(animes: List[Anime], k: int = None) -> types.InlineKeyboardMarkup:
     btns = [
         [
             types.InlineKeyboardButton(
-                text=f"{anime.name_ru} ({anime.episodes_count} серий)", callback_data=f"anime_{anime.id}"
+                text=f"{anime.name_ru} ({len(anime.episodes)} серий)", callback_data=f"anime_{anime.id}"
             )
         ]
         for anime in animes
@@ -52,7 +52,7 @@ async def search_anime(callback: types.CallbackQuery) -> None:
 
     try:
         anime = API.anilibria.value.random() if data == "random" else API.anilibria.value.search_id(int(data))
-        description = await generate_description(anime)
+        description = generate_description(anime)
     except AniLibriaRequestException:
         await callback.answer(Error.SERVER_ERROR.value, show_alert=True)
     except Exception:
@@ -68,17 +68,20 @@ async def search_anime(callback: types.CallbackQuery) -> None:
 async def similar(callback: types.CallbackQuery) -> None:
     anime_id = callback.data.split("_")[1]
     anime = API.anilibria.value.search_id(anime_id)
-    genre_pairs = list(combinations(anime.genres, 2))
 
     msg = await callback.message.answer(f"<b>⌛ Поиск.. 0%</b>")
     animes = []
 
-    for idx, pair in enumerate(genre_pairs, start=1):
+    all_genre_pairs = []
+    for i in range(min(5, len(anime.genres)), 1, -1):
+        genre_pairs = list(combinations(anime.genres, i))
+        all_genre_pairs.extend(genre_pairs)
+
+    for idx, pair in enumerate(all_genre_pairs, start=1):
         results = API.anilibria.value.search(
             filter=SearchFilter(
                 years=list(range(anime.year - 2, anime.year + 3)),
-                genres=pair,
-                limit=3,
+                genres=list(pair),
             )
         )
 
@@ -86,9 +89,24 @@ async def similar(callback: types.CallbackQuery) -> None:
             if result.id != anime.id and result not in animes:
                 animes.append(result)
 
-        await msg.edit_text(f"<b>{'⌛' if idx % 2 == 0 else '⏳'} Поиск.. {round(idx/len(genre_pairs)*100, 1)}%</b>")
+        await msg.edit_text(
+            f"<b>{'⌛' if idx % 2 == 0 else '⏳'} Поиск.. {round(idx/len(all_genre_pairs)*100, 1)}%</b>"
+        )
+        if len(animes) >= 5:
+            break
 
-    await msg.edit_text(f"<b>Похожие аниме на <i>{anime.name_ru}</i></b>", reply_markup=anime_kb(animes))
+    await msg.edit_text(f"<b>Похожие аниме на <i>{anime.name_ru}</i></b>", reply_markup=anime_kb(animes[:5]))
+
+
+@router.callback_query(F.data.startswith("watch_"))
+async def _(callback: types.CallbackQuery) -> None:
+    try:
+        _, anime_id = callback.data.split("_")
+        await callback.message.answer(generate_links(anime_id))
+    except AniLibriaRequestException:
+        await callback.answer(Error.SERVER_ERROR.value, show_alert=True)
+    except Exception:
+        await callback.answer(Error.NOT_FOUND.value, show_alert=True)
 
 
 @router.callback_query(F.data == "home")
