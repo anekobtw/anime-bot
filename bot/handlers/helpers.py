@@ -24,7 +24,7 @@ def generate_links(anime_id: int) -> str:
 
     return Keyboards.links(
         trailer=jikan["trailer"]["url"] if jikan else None,
-        anilibria=f"https://www.anilibria.top/anime/releases/release/{anilibria}/episodes",
+        anilibria=f"https://www.anilibria.top/anime/releases/release/{anilibria.code}/episodes",
         jutsu=f"https://jut.su/{jutsu[0].name.id}" if jutsu else None,
     )
 

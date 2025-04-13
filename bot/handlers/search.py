@@ -85,7 +85,7 @@ async def similar(callback: types.CallbackQuery) -> None:
 async def _(callback: types.CallbackQuery) -> None:
     try:
         _, anime_id = callback.data.split("_")
-        await callback.message.answer(text="click the buttons", reply_markup=generate_links(anime_id))
+        await callback.message.answer(text=StatusMessage.FOUND.value, reply_markup=generate_links(anime_id))
     except AniLibriaRequestException:
         await callback.answer(Error.SERVER_ERROR.value, show_alert=True)
     except Exception as e:
