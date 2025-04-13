@@ -1,7 +1,7 @@
 from datetime import datetime
+from typing import Any
 
 import pymorphy3
-import requests
 from anilibria.models import Anime
 from dateutil.relativedelta import relativedelta
 
@@ -10,38 +10,34 @@ from enums import API, AnimeInfo
 morph = pymorphy3.MorphAnalyzer()
 
 
-def generate_links(anime_id: int) -> str:
-    def get_anilist_id(title: str) -> int | None:
-        q = "query($search:String){Media(search:$search,type:ANIME){id}}"
-        r = requests.post("https://graphql.anilist.co", json={"query": q, "variables": {"search": title}})
-        return r.json().get("data", {}).get("Media", {}).get("id")
+def fetch_link(fetch_func) -> Any | None:
+    try:
+        return fetch_func()
+    except Exception:
+        return None
 
+
+def generate_links(anime_id: int) -> str:
     anilibria = API.anilibria.value.search_id(anime_id)
-    jikan = API.jikan.value.search(anilibria.name_en)["data"][0]
-    anilist_url = f"https://anilist.co/anime/{get_anilist_id(anilibria.name_en)}"
-    jutsu = API.jutsu.value.search(anilibria.name_ru)[0]
+    jikan = fetch_link(lambda: API.jikan.value.search(search_type="anime", query=anilibria.name_en))["data"][0]
+    jutsu = fetch_link(lambda: API.jutsu.value.search(anilibria.name_ru))
 
     return AnimeInfo.LINKS.value.format(
-        trailer=jikan["trailer"]["url"],
-        anilist=anilist_url,
-        jikan=jikan["url"],
-        anilibria=f"https://www.anilibria.top/anime/releases/release/{anilibria.code}/episodes",
-        jutsu=f"https://jut.su/{jutsu.id}",
+        trailer=jikan["trailer"]["url"] if jikan else "None",
+        anilibria=(f"https://www.anilibria.top/anime/releases/release/{anilibria}/episodes"),
+        jutsu=f"https://jut.su/{jutsu[0].name.id}" if jutsu else "None",
     )
 
 
 def generate_description(anime: Anime) -> str:
-    description = AnimeInfo.DESCRIPTION.value.format(
+    return AnimeInfo.DESCRIPTION.value.format(
         name=anime.name_ru,
         year=f"{anime.season.capitalize()} {anime.year}",
         in_favorites=anime.in_favorites,
         genres=", ".join(anime.genres),
-        status=anime.status,
         type=anime.type,
         description=f"{'.'.join(anime.description.split('.')[:3])}...",
     )
-
-    return description
 
 
 def pluralize(word: str, number: int) -> str:

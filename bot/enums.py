@@ -2,7 +2,7 @@ import datetime
 from enum import Enum
 
 from aiogram import types
-from anilibria.client import AniLibriaClient
+from anilibria.client import AniLibriaClient, Anime
 from jikanpy import Jikan
 from jutsu_api import API
 
@@ -41,27 +41,31 @@ class Keyboards(Enum):
     MENU = types.InlineKeyboardMarkup(
         inline_keyboard=[
             [types.InlineKeyboardButton(text=Buttons.RANDOM.value, callback_data="anime_random")],
-            [
-                types.InlineKeyboardButton(
-                    text=Buttons.SCHEDULE.value, callback_data=f"schedule_{datetime.datetime.now().weekday()}"
-                )
-            ],
+            [types.InlineKeyboardButton(text=Buttons.SCHEDULE.value, callback_data=f"schedule_{datetime.datetime.now().weekday()}")],
             [types.InlineKeyboardButton(text=Buttons.TELEGRAM_CHANNEL.value, url="t.me/anekobtw_c")],
         ]
     )
 
     @staticmethod
-    def anime(anime_id: int) -> types.InlineKeyboardMarkup:
+    def anime_page(anime_id: int) -> types.InlineKeyboardMarkup:
         return types.InlineKeyboardMarkup(
             inline_keyboard=[
                 [
-                    [types.InlineKeyboardButton(text=Buttons.WATCH.value, callback_data=f"watch_{anime_id}")],
-                    [types.InlineKeyboardButton(text=Buttons.SIMILAR.value, callback_data=f"similar_{anime_id}")],
+                    types.InlineKeyboardButton(text=Buttons.WATCH.value, callback_data=f"watch_{anime_id}"),
+                    types.InlineKeyboardButton(text=Buttons.SIMILAR.value, callback_data=f"similar_{anime_id}"),
                 ],
                 [types.InlineKeyboardButton(text=Buttons.RANDOM.value, callback_data="anime_random")],
                 [types.InlineKeyboardButton(text=Buttons.HOME.value, callback_data="home")],
             ]
         )
+
+    @staticmethod
+    def anime_search(animes: list[Anime], limit: int = None) -> types.InlineKeyboardMarkup:
+        if limit:
+            animes = animes[:limit]
+        btns = [[types.InlineKeyboardButton(text=f"{anime.name_ru} ({len(anime.episodes)} серий)", callback_data=f"anime_{anime.id}")] for anime in animes]
+        btns.append([types.InlineKeyboardButton(text=Buttons.HOME.value, callback_data="home")])
+        return types.InlineKeyboardMarkup(inline_keyboard=btns)
 
 
 class GeneralMessage(Enum):
@@ -69,24 +73,12 @@ class GeneralMessage(Enum):
 
 
 class AnimeInfo(Enum):
-    DESCRIPTION = (
-        "🍿 <code>{name}</code> ({year}, {status})\n\n"
-        "❤️ <b>Понравилось:</b> {in_favorites}\n"
-        "🎥 <b>Тип:</b> {type}\n"
-        "🎭 <b>Жанры:</b> {genres}\n\n"
-        "📃 <i>{description}</i>\n\n"
-        "<b>@watch_animes_bot</b>"
-    )
-    LINKS = (
-        "Ссылки:\n\n"
-        "<a href={trailer}>Trailer</a>\n"
-        "🇺🇸 <a href={anilist}>AniList</a> | <a href={jikan}>MyAnimeList</a>\n"
-        "🇷🇺 <a href={anilibria}>AniLibria{/a} | <a href={jutsu}>jutsu</a>\n"
-    )
+    DESCRIPTION = "🍿 <code>{name}</code> ({year})\n\n" "❤️ <b>Понравилось:</b> {in_favorites}\n" "🎥 <b>Тип:</b> {type}\n" "🎭 <b>Жанры:</b> {genres}\n\n" "📃 <i>{description}</i>\n\n" "<b>@watch_animes_bot</b>"
+    LINKS = "🎬 <b>Трейлер:</b>\n" '🇯🇵 <b><a href="{trailer}">YouTube</a></b>\n\n' "📺 <b>Смотреть:</b>\n" '🇷🇺 <b><a href="{anilibria}">AniLibria</a></b>\n' '🇷🇺 <b><a href="{jutsu}">Jutsu</a></b>\n\n' "📖 <b>Манга:</b>\n" "coming soon...\n\n"
 
 
 class StatusMessage(Enum):
-    LOADING = "⏳ Ищу аниме... Один момент!"
+    SEARCHING = "⏳ Ищу аниме... Один момент!"
     NOT_FOUND = "😞 Упс! Аниме не найдено. Попробуй другое название!"
     FOUND = "🔎 Вот что я нашел:"
 
