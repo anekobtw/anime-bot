@@ -5,7 +5,7 @@ import pymorphy3
 from anilibria.models import Anime
 from dateutil.relativedelta import relativedelta
 
-from enums import API, AnimeInfo
+from enums import API, AnimeInfo, Keyboards
 
 morph = pymorphy3.MorphAnalyzer()
 
@@ -19,13 +19,13 @@ def fetch_link(fetch_func) -> Any | None:
 
 def generate_links(anime_id: int) -> str:
     anilibria = API.anilibria.value.search_id(anime_id)
-    jikan = fetch_link(lambda: API.jikan.value.search(search_type="anime", query=anilibria.name_en))["data"][0]
+    jikan = fetch_link(lambda: API.jikan.value.search(search_type="anime", query=anilibria.name_en)).get("data", None)[0]
     jutsu = fetch_link(lambda: API.jutsu.value.search(anilibria.name_ru))
 
-    return AnimeInfo.LINKS.value.format(
-        trailer=jikan["trailer"]["url"] if jikan else "None",
-        anilibria=(f"https://www.anilibria.top/anime/releases/release/{anilibria}/episodes"),
-        jutsu=f"https://jut.su/{jutsu[0].name.id}" if jutsu else "None",
+    return Keyboards.links(
+        trailer=jikan["trailer"]["url"] if jikan else None,
+        anilibria=f"https://www.anilibria.top/anime/releases/release/{anilibria}/episodes",
+        jutsu=f"https://jut.su/{jutsu[0].name.id}" if jutsu else None,
     )
 
 

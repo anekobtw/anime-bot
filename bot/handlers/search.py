@@ -44,7 +44,8 @@ async def search_anime(callback: types.CallbackQuery) -> None:
     except AniLibriaRequestException:
         await callback.answer(Error.SERVER_ERROR.value, show_alert=True)
         return
-    except Exception:
+    except Exception as e:
+        print(e)
         await callback.answer(Error.NOT_FOUND.value, show_alert=True)
         return
 
@@ -57,7 +58,11 @@ async def search_anime(callback: types.CallbackQuery) -> None:
 @router.callback_query(F.data.startswith("similar_"))
 async def similar(callback: types.CallbackQuery) -> None:
     anime_id = callback.data.split("_")[1]
-    anime = API.anilibria.value.search_id(anime_id)
+    try:
+        anime = API.anilibria.value.search_id(anime_id)
+    except AniLibriaRequestException:
+        await callback.answer(Error.SERVER_ERROR.value, show_alert=True)
+        return
 
     msg = await callback.message.answer(f"<b>⌛ Поиск.. 0%</b>")
     animes = []
@@ -80,7 +85,7 @@ async def similar(callback: types.CallbackQuery) -> None:
 async def _(callback: types.CallbackQuery) -> None:
     try:
         _, anime_id = callback.data.split("_")
-        await callback.message.answer(generate_links(anime_id))
+        await callback.message.answer(text="click the buttons", reply_markup=generate_links(anime_id))
     except AniLibriaRequestException:
         await callback.answer(Error.SERVER_ERROR.value, show_alert=True)
     except Exception as e:

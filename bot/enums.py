@@ -20,6 +20,9 @@ class Buttons(Enum):
     SIMILAR = "🔍 Похожие аниме"
     HOME = "🏠 На главную"
     TELEGRAM_CHANNEL = "📰 Телеграм канал с новостями"
+    TRAILER = "🇯🇵 Trailer"
+    ANILIBRIA = "🇷🇺 AniLibria"
+    JUTSU = "🇷🇺 Jutsu"
 
 
 class Keyboards(Enum):
@@ -45,6 +48,15 @@ class Keyboards(Enum):
             [types.InlineKeyboardButton(text=Buttons.TELEGRAM_CHANNEL.value, url="t.me/anekobtw_c")],
         ]
     )
+    def links(trailer: str = None, anilibria: str = None, jutsu: str = None) -> types.InlineKeyboardMarkup:
+        kb = []
+        if trailer:
+            kb.append([types.InlineKeyboardButton(text=Buttons.TRAILER.value, url=trailer)])
+        if anilibria:
+            kb.append([types.InlineKeyboardButton(text=Buttons.ANILIBRIA.value, url=anilibria)])
+        if jutsu:
+            kb.append([types.InlineKeyboardButton(text=Buttons.JUTSU.value, url=jutsu)])
+        return types.InlineKeyboardMarkup(inline_keyboard=kb)
 
     @staticmethod
     def anime_page(anime_id: int) -> types.InlineKeyboardMarkup:
@@ -73,8 +85,14 @@ class GeneralMessage(Enum):
 
 
 class AnimeInfo(Enum):
-    DESCRIPTION = "🍿 <code>{name}</code> ({year})\n\n" "❤️ <b>Понравилось:</b> {in_favorites}\n" "🎥 <b>Тип:</b> {type}\n" "🎭 <b>Жанры:</b> {genres}\n\n" "📃 <i>{description}</i>\n\n" "<b>@watch_animes_bot</b>"
-    LINKS = "🎬 <b>Трейлер:</b>\n" '🇯🇵 <b><a href="{trailer}">YouTube</a></b>\n\n' "📺 <b>Смотреть:</b>\n" '🇷🇺 <b><a href="{anilibria}">AniLibria</a></b>\n' '🇷🇺 <b><a href="{jutsu}">Jutsu</a></b>\n\n' "📖 <b>Манга:</b>\n" "coming soon...\n\n"
+    DESCRIPTION = (
+        "🍿 <code>{name}</code> ({year})\n\n"
+        "❤️ <b>Понравилось:</b> {in_favorites}\n"
+        "🎥 <b>Тип:</b> {type}\n"
+        "🎭 <b>Жанры:</b> {genres}\n\n"
+        "📃 <i>{description}</i>\n\n"
+        "<b>@watch_animes_bot</b>"
+    )  # fmt: skip
 
 
 class StatusMessage(Enum):
