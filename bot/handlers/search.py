@@ -39,7 +39,8 @@ async def search_anime(callback: types.CallbackQuery) -> None:
     data = callback.data.split("_")[1]
 
     try:
-        anime = API.anilibria.value.random() if data == "random" else API.anilibria.value.search_id(int(data))
+        anime = API.anilibria.value.random(
+        ) if data == "random" else API.anilibria.value.search_id(int(data))
         description = generate_description(anime)
     except AniLibriaRequestException:
         await callback.answer(Error.SERVER_ERROR.value, show_alert=True)
@@ -50,7 +51,8 @@ async def search_anime(callback: types.CallbackQuery) -> None:
         return
 
     await callback.message.edit_media(
-        media=types.InputMediaPhoto(media=anime.poster_original_url, caption=description),
+        media=types.InputMediaPhoto(
+            media=anime.poster_original_url, caption=description),
         reply_markup=Keyboards.anime_page(anime.id),
     )
 
@@ -64,12 +66,14 @@ async def similar(callback: types.CallbackQuery) -> None:
         await callback.answer(Error.SERVER_ERROR.value, show_alert=True)
         return
 
-    msg = await callback.message.answer(f"<b>⌛ Поиск.. 0%</b>")
+    msg = await callback.message.answer("<b>⌛ Поиск.. 0%</b>")
     animes = []
-    all_genre_pairs = [list(combinations(anime.genres, i) for i in range(min(5, len(anime.genres)), 1, -1))]
+    all_genre_pairs = [combinations(anime.genres, i)
+                       for i in range(min(5, len(anime.genres)), 1, -1)]
 
-    for idx, pair in enumerate(all_genre_pairs, start=1):
-        results = API.anilibria.value.search(filter=SearchFilter(years=list(range(anime.year - 2, anime.year + 3)), genres=list(pair)))
+    for idx, pair in enumerate(all_genre_pairs):
+        results = API.anilibria.value.search(filter=SearchFilter(
+            years=list(range(anime.year - 2, anime.year + 3)), genres=list(pair)))
         for result in results:
             if result.id != anime.id and result not in animes:
                 animes.append(result)

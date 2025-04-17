@@ -1,4 +1,4 @@
-aiogram==3.19.0
+aiogram==3.20.0.post0
 anilibria==0.1.8
 jutsu_api==2.5
 pymorphy3==2.0.3
