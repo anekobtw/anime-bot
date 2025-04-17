@@ -66,19 +66,22 @@ async def similar(callback: types.CallbackQuery) -> None:
         await callback.answer(Error.SERVER_ERROR.value, show_alert=True)
         return
 
-    msg = await callback.message.answer("<b>⌛ Поиск.. 0%</b>")
+    msg = await callback.message.answer("<b>⌛ Поиск..</b>")
     animes = []
     all_genre_pairs = [combinations(anime.genres, i)
                        for i in range(min(5, len(anime.genres)), 1, -1)]
 
-    for idx, pair in enumerate(all_genre_pairs):
-        results = API.anilibria.value.search(filter=SearchFilter(
-            years=list(range(anime.year - 2, anime.year + 3)), genres=list(pair)))
-        for result in results:
-            if result.id != anime.id and result not in animes:
-                animes.append(result)
+    for combination in all_genre_pairs:
+        for pair in combination:
+            results = API.anilibria.value.search(filter=SearchFilter(
+                years=list(range(anime.year - 2, anime.year + 3)), genres=list(pair)))
+            for result in results:
+                if result.id != anime.id and result not in animes:
+                    animes.append(result)
 
-        await msg.edit_text(f"<b>{'⌛' if idx % 2 == 0 else '⏳'} Поиск.. {round(idx/len(all_genre_pairs)*100, 1)}%</b>")
+            if len(animes) >= 5:
+                break
+
         if len(animes) >= 5:
             break
 
