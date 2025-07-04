@@ -1,6 +1,11 @@
 aiogram==3.20.0.post0
 anilibria==0.1.8
+jikanpy==4.3.2
 jutsu_api==2.5
-pymorphy3==2.0.3
-python-dotenv==1.1.0
+mangadex==2.7
+nekosbest==1.1.13
+pymorphy3==2.0.4
+python-dotenv==1.1.1
 python_dateutil==2.9.0.post0
+Requests==2.32.4
+tracemoepy==4.1

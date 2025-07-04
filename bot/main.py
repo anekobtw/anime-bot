@@ -15,7 +15,7 @@ async def run_bot() -> None:
     logging.basicConfig(
         force=True,
         level=logging.DEBUG,
-        format="%(levelname)s | %(asctime)s | %(name)s | %(message)s",
+        format="%(levelname)s | %(message)s",
         datefmt="%H:%M:%S",
     )
 
