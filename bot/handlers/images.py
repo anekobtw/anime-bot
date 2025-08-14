@@ -4,6 +4,7 @@ import tracemoepy
 from nekosbest import Client
 
 router = Router()
+client = Client()
 
 
 @router.message(F.text.startswith("https://"))
@@ -15,8 +16,12 @@ async def _(message: types.Message):
 
             with open(f'{message.from_user.id}.mp4', 'wb') as f:
                 f.write(video)
-                await message.answer_video(video=types.FSInputFile(f.name), caption=f"🤔 It's probably from anime <b>{resp.result[0].anilist.title.romaji}</b>\Similarity: <b>{round(resp.result[0].similarity*100, 1)}%</b>")
-            
+                await message.answer_video(
+                    video=types.FSInputFile(f.name),
+                    caption=f"It's probably from <b>{resp.result[0].anilist.title.english}</b>\nSimilarity: <b>{round(resp.result[0].similarity*100, 1)}%</b>",
+                    reply_markup=types.InlineKeyboardMarkup(inline_keyboard=[[types.InlineKeyboardButton(text="🔍 More info", callback_data=f"anime_{resp.result[0].anilist.id}")]]),
+                )
+
             os.remove(f'{message.from_user.id}.mp4')
 
     except tracemoepy.EmptyImage:
@@ -25,11 +30,14 @@ async def _(message: types.Message):
     except tracemoepy.ServerError:
         await message.answer("⚠️ The image is malformed or something went wrong.")
 
+    except AttributeError:
+        await message.answer("⚠️ Error encountered. Please, try again.")
+
 
 @router.callback_query(F.data.startswith("image"))
 async def _(callback: types.CallbackQuery) -> None:
-    client = Client()
     result = await client.get_image(callback.data.split("_")[1], 1)
+    
     await callback.message.edit_media(
         media=types.InputMediaPhoto(media=types.URLInputFile(result.url),
         caption=f"by <b>{result.artist_name}</b>"),
